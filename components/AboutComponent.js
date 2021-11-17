@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, FlatList } from "react-native";
 import { Card } from "react-native-elements";
 import { ListItem } from "react-native-elements";
-import { FlatList } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import { baseUrl } from "../shared/baseUrl";
 import Loading from "./LoadingComponent";
@@ -15,7 +14,7 @@ const mapStateToProps = (state) => {
 
 function Mission() {
 	return (
-		<Card title={"Mission"}>
+		<Card title={"Our Mission"}>
 			<Text style={{ margin: 10 }}>
 				We present a curated database of the best campsites in the vast woods
 				and backcountry of the World Wide Web Wilderness. We increase access to
