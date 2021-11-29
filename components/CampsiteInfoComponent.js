@@ -43,6 +43,8 @@ function RenderCampsite(props) {
 
 	const recognizeDrag = ({ dx }) => (dx < -200 ? true : false);
 
+	const recognizeComment = ({ dx }) => (dx > 200 ? true : false);
+
 	const panResponder = PanResponder.create({
 		onStartShouldSetPanResponder: () => true,
 		onPanResponderGrant: () => {
@@ -74,6 +76,9 @@ function RenderCampsite(props) {
 					],
 					{ cancelable: false }
 				);
+			} else if (recognizeComment(gestureState)) {
+				console.log("hi");
+				props.onShowModal();
 			}
 			return true;
 		},
@@ -112,7 +117,7 @@ function RenderCampsite(props) {
 							color="#5637DD"
 							raised
 							reverse
-							onPress={() => props.onShowModal()}
+							onPress={() => props.toggleModal()}
 						/>
 					</View>
 				</Card>
