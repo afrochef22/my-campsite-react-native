@@ -12,6 +12,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Animatable from "react-native-animatable";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import * as Notifications from "expo-notifications";
 
 class Reservation extends Component {
 	constructor(props) {
@@ -29,6 +30,32 @@ class Reservation extends Component {
 		title: "Reserve Campsite",
 	};
 
+	handleReservation() {
+		Alert.alert(
+			"Begin Search?",
+			`Number of Campers ${this.state.campers}\n\nHike-In? ${
+				this.state.hikeIn
+			}\n\nDate: ${this.state.date.toLocaleDateString("en-US")}`,
+			[
+				{
+					text: "Cancel",
+					style: "destructive",
+					onPress: () => this.resetForm(),
+				},
+				{
+					text: "Ok",
+					onPress: () => {
+						this.presentLocalNotification(
+							this.state.date.toLocaleDateString("en-US")
+						);
+						this.resetForm();
+					},
+				},
+			],
+			{ cancelable: false }
+		);
+	}
+
 	resetForm() {
 		this.setState({
 			campers: 1,
@@ -36,6 +63,31 @@ class Reservation extends Component {
 			date: new Date(),
 			showCalender: false,
 		});
+	}
+
+	async presentLocalNotification(date) {
+		function sendNotification() {
+			Notifications.setNotificationHandler({
+				handleNotification: async () => ({
+					shouldShowAlert: true,
+				}),
+			});
+
+			Notifications.scheduleNotificationAsync({
+				content: {
+					title: "Your Campsite Reservation Search",
+					body: `Search for ${date} requested`,
+				},
+				trigger: null,
+			});
+		}
+		let permissions = await Notifications.getPermissionsAsync();
+		if (!permissions.granted) {
+			permissions = await Notifications.requestPermissionsAsync();
+		}
+		if (permissions.granted) {
+			sendNotification();
+		}
 	}
 
 	render() {
@@ -93,23 +145,7 @@ class Reservation extends Component {
 					)}
 					<View style={styles.formRow}>
 						<Button
-							onPress={() =>
-								Alert.alert(
-									"Begin Search?",
-									`Number of Campers ${this.state.campers}\n\nHike-In? ${
-										this.state.hikeIn
-									}\n\nDate: ${this.state.date.toLocaleDateString("en-US")}`,
-									[
-										{
-											text: "Cancel",
-											style: "destructive",
-											onPress: () => this.resetForm(),
-										},
-										{ text: "Ok", onPress: () => this.resetForm() },
-									],
-									{ cancelable: false }
-								)
-							}
+							onPress={() => this.handleReservation()}
 							title="Search"
 							color="#5637DD"
 							accessibilityLabel="Tap me to search for available campsites to reserve"
